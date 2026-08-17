@@ -838,12 +838,16 @@
 <code>IDecide</code> coalgebra and the WorkManager's worker contract
 (<code>IWorker.ProcessAsync(CloudEvent)</code>).</p>
 <h2 id="topic-binding">Topic binding</h2>
-<p>A worker binds to exactly one topic at <code>CreateWorker</code>. A strategy needs
-both market <strong>and</strong> position events, so bind with a NATS wildcard:</p>
-<div class="highlight"><pre><span></span><code>sc.&lt;scenarioId&gt;.&gt;
-</code></pre></div>
-<p>Both streams arrive on one subscription and are separated by CloudEvent
-<code>type</code>.</p>
+<p>A strategy needs both market <strong>and</strong> position events. Bind with two
+explicit topics at <code>CreateWorker</code> (<code>CreateWorkerRequest.topics</code>; see
+virtufin-workmanager's multi-topic worker support) -- e.g. the
+scenario's market-data feed and its position feed. Do <strong>not</strong> bind with
+a wildcard: the deployed Dapr pubsub component is <code>pubsub.redis</code>
+(Redis Streams), which has no wildcard subscription support -- a
+worker bound to <code>sc.&lt;scenarioId&gt;.&gt;</code> (a pattern this doc used to
+recommend) subscribes to a Redis Stream literally named
+<code>"sc.&lt;scenarioId&gt;.&gt;"</code>, which nothing is ever published to. Both topics
+arrive on the one worker and are separated by CloudEvent <code>type</code>.</p>
 <h2 id="dispatch">Dispatch</h2>
 <pre class="mermaid"><code>flowchart TD
     E[CloudEvent] --&gt; T{type?}
@@ -852,24 +856,33 @@ both market <strong>and</strong> position events, so bind with a NATS wildcard:<
     T --&gt;|virtufin.market.*| M{is TMarket?}
     M --&gt;|no| N2[skipped]
     M --&gt;|yes| STEP["Decide.Step(state, (market, portfolio))"]
-    STEP --&gt; ENC["enrich + encode actions"]
-    ENC --&gt; RESP[response CloudEvent]
+    STEP --&gt; ENC["ToOrderSubmission"]
+    ENC --&gt; RESP["Order submitted CloudEvent"]
     T --&gt;|other| N3[ignored]</code></pre>
 <ul>
 <li><strong>Position events</strong> are the feedback edge: fills fold into the
   portfolio, so the next decision sees updated holdings. No response is
   emitted.</li>
-<li><strong>Market events</strong> step the strategy; if the strategy emits actions
-  they become a <code>trade</code> response.</li>
+<li><strong>Market events</strong> step the strategy; an emitted action becomes the
+  pubsub-topics spec's "Order submitted" event (see <code>ToOrderSubmission</code>
+  and <code>BuildEnvelope</code>). At most one action per step is supported today
+  -- <code>WorkerBase.IWorker.ProcessAsync</code> returns exactly one response
+  CloudEvent per trigger.</li>
 <li><strong><code>TMarket</code> filtering</strong>: choosing <code>RichMarketEvent</code> as <code>TMarket</code>
   accepts derived signals (candles, VWAP, volatility) but skips raw
   <code>MarketEvent</code> ticks — a deliberate type-level filter.</li>
 </ul>
 <h2 id="response-routing">Response routing</h2>
-<p>The WorkManager publishes the response on <code>output.Type</code>. The bridge
-uses the worker's default response type, overridable per message via the
-<code>replytopic</code> extension (set by <code>publish_with_result</code> callers or by a
-fixed <code>CreateWorkerRequest.config</code> entry).</p>
+<p>Unlike a typical <code>WorkerBase</code> worker (which publishes on <code>output.Type</code>,
+overridable per message via <code>replytopic</code>), the trading envelope keeps
+<code>ce-type</code> fixed at <code>com.virtufin.trading.order.submitted</code> regardless of
+<code>replytopic</code> -- it's a stable identifier per the pubsub-topics spec,
+independent of the per-scenario topic. Routing instead goes through
+<code>WorkerBase.PublishTopicAttribute</code> (<code>publishtopic</code>), set by
+<code>BuildEnvelope</code> to <code>sc.&lt;scenarioid&gt;.trading.order.submitted</code>; the
+WorkManager reads that extension to pick the publish topic and strips
+it before publish, so subscribers never see it (see
+virtufin-workmanager's <code>WorkManager.PublishOutputAsync</code>).</p>
 <h2 id="state">State</h2>
 <p>Strategy state and portfolio state live in worker instance fields — the
 engine keeps one worker object alive for the instance's lifetime, so
@@ -911,7 +924,7 @@ payload fields are never consulted as config.</p>
     <div class="md-copyright__highlight">
       <div style="display:table;width:100%">
   <span style="display:table-cell">&copy; 2026 Häner Consulting. All Rights Reserved.</span>
-  <span style="display:table-cell;text-align:right">2026-08-16T17:03:22Z</span>
+  <span style="display:table-cell;text-align:right">2026-08-17T11:08:20Z</span>
 </div>
 
     </div>

@@ -771,6 +771,22 @@
 <p>A <strong>strategy</strong> in Virtufin is the pair of morphisms <code>(decide, execute)</code>
 modelled coalgebraically (see the behaviour spec). This devkit provides
 the <code>decide</code> bridge and its supporting types.</p>
+<p>In plain terms: a strategy watches the market and its own current
+holdings, and on each new piece of market data decides whether to
+submit an order. <code>decide</code> is the "watch and decide" half; <code>execute</code> is
+the separate, downstream half that actually places or simulates the
+order (a different process, connected by the pubsub-topics spec's
+trading events — not a function call in the same process). This devkit
+only implements <code>decide</code>; it hands off to <code>execute</code> by publishing an
+"Order submitted" event rather than calling anything directly.</p>
+<blockquote>
+<p><strong>Before wiring a strategy to real capital (<code>act</code>)</strong>, see <a href="../strategy-author-guide/#4-test-before-you-trade">Strategy
+Author Guide §4</a>:
+unit-test <code>Step</code> directly, backtest against a <code>hyp.BACKTEST</code> world,
+and shadow-trade with an <code>ObserveOnlyExecutor</code> before ever setting
+<code>strategy.world = act</code>. Nothing in this devkit certifies a strategy
+as safe to trade — it only provides the plumbing.</p>
+</blockquote>
 <h2 id="the-coalgebra">The coalgebra</h2>
 <p><code>decide</code> is an <code>IDecide&lt;TState, TMarket, TPortfolio, TAction&gt;</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="k">public</span><span class="w"> </span><span class="k">interface</span><span class="w"> </span><span class="n">IDecide</span><span class="o">&lt;</span><span class="n">TState</span><span class="p">,</span><span class="w"> </span><span class="n">TMarket</span><span class="p">,</span><span class="w"> </span><span class="n">TPortfolio</span><span class="p">,</span><span class="w"> </span><span class="n">TAction</span><span class="o">&gt;</span>
@@ -855,7 +871,7 @@ actions into a response CloudEvent.</p>
     <div class="md-copyright__highlight">
       <div style="display:table;width:100%">
   <span style="display:table-cell">&copy; 2026 Häner Consulting. All Rights Reserved.</span>
-  <span style="display:table-cell;text-align:right">2026-08-16T17:03:22Z</span>
+  <span style="display:table-cell;text-align:right">2026-08-17T11:08:20Z</span>
 </div>
 
     </div>
