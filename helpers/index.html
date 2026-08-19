@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Documentation for the Virtufin strategy devkit (Virtufin.Strategy.DevKit, .Events, .Indicators). Covers the IDecide coalgebra bridge, CloudEvent mappers, the portfolio fold, and indicators.">
+        <meta name="description" content="Documentation for the Virtufin strategy devkit (Virtufin.Strategy.DevKit, .Events). Covers the IDecide coalgebra bridge, CloudEvent mappers, and the portfolio fold.">
       
       
       
@@ -671,10 +671,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#moving-average-virtufinstrategydevkitindicators" class="md-nav__link">
+  <a href="#moving-average" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Moving average (Virtufin.Strategy.DevKit.Indicators)
+        Moving average
       
     </span>
   </a>
@@ -806,10 +806,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#moving-average-virtufinstrategydevkitindicators" class="md-nav__link">
+  <a href="#moving-average" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Moving average (Virtufin.Strategy.DevKit.Indicators)
+        Moving average
       
     </span>
   </a>
@@ -916,13 +916,17 @@ precisions via <code>DecimalAmount.ToCardinal(int)</code>.</p>
 <code>RichTradeAction</code> (strategy id, venue, latency budget). <code>TradeActionJson</code>
 encodes the enriched action as the bridge's response payload shape.
 Adding a case to the ADT is a compile error here until mapped.</p>
-<h2 id="moving-average-virtufinstrategydevkitindicators">Moving average (<code>Virtufin.Strategy.DevKit.Indicators</code>)</h2>
-<p><code>SimpleMovingAverage</code> is an immutable incremental SMA: <code>Push</code> returns a
-new instance (safe inside <code>IStrategyState</code> records); <code>Value</code> is <code>null</code>
-until the window is full. Pure <code>decimal</code>, no Virtufin dependencies.</p>
+<h2 id="moving-average">Moving average</h2>
+<p><code>SimpleMovingAverage&lt;TTime,TValue&gt;</code> moved to <code>Virtufin.Base.Behaviour</code>
+(<code>virtufin-dotnet</code>) — an immutable, time-windowed SMA: <code>Add</code> returns a new
+instance (safe inside <code>IStrategyState</code> records); <code>Value</code> throws until at
+least one sample has been added. See that repo's docs for the full API
+(the divisor and window-cutoff delegates, the <code>TimestampedSample&lt;TTime,TValue&gt;</code>
+shape). This repo's <code>MovingAverage</code> example strategy
+(<code>virtufin-strategies</code>) shows the inline consumption pattern.</p>
 <h2 id="amount-conversion">Amount conversion</h2>
 <p>Fixed-point conversion lives in <code>DecimalAmount</code> itself
-(<code>Virtufin.Core</code> 0.4.0+): <code>From(decimal, int)</code> (exact),
+(<code>Virtufin.Core</code> 0.6.0+): <code>From(decimal, int)</code> (exact),
 <code>FromCardinal(long, int)</code>, <code>ToDecimal()</code>, and <code>ToCardinal(int)</code>
 (precision rescale). <code>AmountJson</code> (in <code>.Events</code>) is only the JSON
 wire-mapping layer: <code>ReadAmount</code>/<code>ReadOptionalAmount</code> parse JSON numbers
@@ -962,7 +966,7 @@ emits the exact decimal back to JSON.</p>
     <div class="md-copyright__highlight">
       <div style="display:table;width:100%">
   <span style="display:table-cell">&copy; 2026 Häner Consulting. All Rights Reserved.</span>
-  <span style="display:table-cell;text-align:right">2026-08-18T09:03:49Z</span>
+  <span style="display:table-cell;text-align:right">2026-08-19T19:55:40Z</span>
 </div>
 
     </div>

@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Documentation for the Virtufin strategy devkit (Virtufin.Strategy.DevKit, .Events, .Indicators). Covers the IDecide coalgebra bridge, CloudEvent mappers, the portfolio fold, and indicators.">
+        <meta name="description" content="Documentation for the Virtufin strategy devkit (Virtufin.Strategy.DevKit, .Events). Covers the IDecide coalgebra bridge, CloudEvent mappers, and the portfolio fold.">
       
       
       
@@ -792,19 +792,17 @@
 <td><code>Virtufin.Strategy.DevKit.Events</code></td>
 <td>CloudEvent mappers, <code>TradeAction</code> enrichment, <code>AmountJson</code></td>
 </tr>
-<tr>
-<td><code>Virtufin.Strategy.DevKit.Indicators</code></td>
-<td><code>SimpleMovingAverage</code> (pure <code>decimal</code>)</td>
-</tr>
 </tbody>
 </table>
+<p>Indicators (<code>SimpleMovingAverage&lt;TTime,TValue&gt;</code>) live in <code>Virtufin.Base.Behaviour</code>
+(<code>virtufin-dotnet</code>) — see that repo's docs, not this one.</p>
 <h2 id="where-to-start">Where to start</h2>
 <ul>
 <li><strong><a href="introduction/">Overview</a></strong> — the strategy model.</li>
 <li><strong><a href="strategy-author-guide/">Strategy Author Guide</a></strong> — implement
   <code>IDecide</code>, subclass <code>StrategyWorkerBase</code>, wire config.</li>
 <li><strong><a href="bridge/">Bridge</a></strong> — the CloudEvent bridge architecture.</li>
-<li><strong><a href="helpers/">Helpers</a></strong> — mappers, portfolio fold, SMA, config.</li>
+<li><strong><a href="helpers/">Helpers</a></strong> — mappers, portfolio fold, config.</li>
 </ul>
 <p>Deployable strategy <em>workers</em> (e.g. the moving-average strategy) live in
 the <a href="https://git.haenerconsulting.com/virtufin/virtufin-strategies">virtufin-strategies</a>
@@ -840,7 +838,7 @@ repo, which consumes these packages via NuGet.</p>
     <div class="md-copyright__highlight">
       <div style="display:table;width:100%">
   <span style="display:table-cell">&copy; 2026 Häner Consulting. All Rights Reserved.</span>
-  <span style="display:table-cell;text-align:right">2026-08-18T09:03:49Z</span>
+  <span style="display:table-cell;text-align:right">2026-08-19T19:55:40Z</span>
 </div>
 
     </div>

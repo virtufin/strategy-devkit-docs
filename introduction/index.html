@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Documentation for the Virtufin strategy devkit (Virtufin.Strategy.DevKit, .Events, .Indicators). Covers the IDecide coalgebra bridge, CloudEvent mappers, the portfolio fold, and indicators.">
+        <meta name="description" content="Documentation for the Virtufin strategy devkit (Virtufin.Strategy.DevKit, .Events). Covers the IDecide coalgebra bridge, CloudEvent mappers, and the portfolio fold.">
       
       
       
@@ -504,10 +504,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-three-packages" class="md-nav__link">
+  <a href="#the-two-packages" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The three packages
+        The two packages
       
     </span>
   </a>
@@ -740,10 +740,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-three-packages" class="md-nav__link">
+  <a href="#the-two-packages" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The three packages
+        The two packages
       
     </span>
   </a>
@@ -784,7 +784,7 @@ only implements <code>decide</code>; it hands off to <code>execute</code> by pub
 Author Guide §4</a>:
 unit-test <code>Step</code> directly, backtest against a <code>hyp.BACKTEST</code> world,
 and shadow-trade with an <code>ObserveOnlyExecutor</code> before ever setting
-<code>strategy.world = act</code>. Nothing in this devkit certifies a strategy
+<code>strategyworld = act</code>. Nothing in this devkit certifies a strategy
 as safe to trade — it only provides the plumbing.</p>
 </blockquote>
 <h2 id="the-coalgebra">The coalgebra</h2>
@@ -807,7 +807,7 @@ as safe to trade — it only provides the plumbing.</p>
   the next decision.</li>
 <li><strong><code>TAction[]</code></strong> — zero or more intents emitted per observation.</li>
 </ul>
-<h2 id="the-three-packages">The three packages</h2>
+<h2 id="the-two-packages">The two packages</h2>
 <table>
 <thead>
 <tr>
@@ -827,13 +827,10 @@ as safe to trade — it only provides the plumbing.</p>
 <td>wire mapping: mappers, enrichment, <code>AmountJson</code></td>
 <td>Core, Base</td>
 </tr>
-<tr>
-<td><code>Virtufin.Strategy.DevKit.Indicators</code></td>
-<td>indicators: <code>SimpleMovingAverage</code></td>
-<td>—</td>
-</tr>
 </tbody>
 </table>
+<p>Indicators (<code>SimpleMovingAverage&lt;TTime,TValue&gt;</code>) live in <code>Virtufin.Base.Behaviour</code>
+(<code>virtufin-dotnet</code>), not in a strategy-devkit package.</p>
 <p>The bridge (<code>StrategyWorkerBase</code>) implements the DevKit worker contract
 (<code>IWorker.ProcessAsync(CloudEvent)</code>) on top of any <code>IDecide</code>, dispatching
 each CloudEvent by type, folding position events into the portfolio,
@@ -871,7 +868,7 @@ actions into a response CloudEvent.</p>
     <div class="md-copyright__highlight">
       <div style="display:table;width:100%">
   <span style="display:table-cell">&copy; 2026 Häner Consulting. All Rights Reserved.</span>
-  <span style="display:table-cell;text-align:right">2026-08-18T09:03:49Z</span>
+  <span style="display:table-cell;text-align:right">2026-08-19T19:55:40Z</span>
 </div>
 
     </div>
